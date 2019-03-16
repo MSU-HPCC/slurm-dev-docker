@@ -48,3 +48,26 @@ supervisorctl -h
 Majority of files from: https://github.com/giovtorres/docker-centos7-slurm/tree/17.11.10
 
 Please see that page for more documentation.
+
+
+## Web configure
+
+You will run your webserver in the docker container
+so inside the terminal with root@ernie....
+
+Make sure to checkout the appropriate branch that you are working on.
+
+Make sure to add your credential files.
+
+Once those are in order run the dev server with:
+```
+python3 manage.py runserver
+```
+
+where manage.py is at /web/Backend/manage.py
+
+If this is your first run, don't forget to migrate the django database.
+```
+python3 manage.py migrate
+python3 manage.py runserver
+```
