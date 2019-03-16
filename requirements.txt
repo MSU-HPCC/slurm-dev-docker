@@ -1,0 +1,14 @@
+django==2.0.2
+mysql-connector-python
+matplotlib==2.1.0
+mpld3
+jinja2
+dj-database-url
+cython
+pycryptodome
+paramiko
+dash==0.38.0
+dash-html-components==0.13.5
+dash-core-components==0.43.1
+dash-table==3.5.0
+dash-daq==0.1.0
