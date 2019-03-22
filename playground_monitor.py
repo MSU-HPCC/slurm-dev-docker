@@ -48,3 +48,5 @@ while(time.time() < target_time):
     else:
         # have not hit checkin time... sleep for 5 seconds
         time.sleep(5)
+
+# 5 minutes have ellapsed, clean up and return result
