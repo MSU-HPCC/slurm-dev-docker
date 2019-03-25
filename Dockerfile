@@ -137,14 +137,15 @@ RUN set -ex \
     && python3 setup.py install
 
 RUN set -ex \
-    && mkdir /testfiles
+    && mkdir /testfiles \
+    && mkdir /playground
 
 COPY slurm.conf /etc/slurm/slurm.conf
 COPY slurmdbd.conf /etc/slurm/slurmdbd.conf
 COPY supervisord.conf /etc/
 COPY requirements.txt /requirements.txt
 COPY testfiles/*.py /testfiles/
-COPY playground-monitor.py /
+COPY playground_monitor.py /
 
 RUN set -ex \
     && pip3 install -r requirements.txt
