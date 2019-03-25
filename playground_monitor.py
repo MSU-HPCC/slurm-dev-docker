@@ -1,15 +1,7 @@
-# enter shabang here
+#!/usr/bin/python3
 import os
 import time
-#import pyslurm
-
-#os.system("docker run stuffs")
-#test if this drops you into a container automatically
-# or if I now have to run:
-# docker exec -it <container name> /bin/bash to get a bash shell in the container
-
-# to run shell commands inside of docker container
-
+import pyslurm
 # pyslurm to submit JOB -- pyslurm.job().submit_batch_job({'script': BashScriptName}) OR
 #   sbatch bashFile - Submit a batch script to Slurm. and returns ID I believe
 # something like ""
@@ -17,6 +9,11 @@ import time
 
 test_duration_minutes = 5
 test_duration_secs = test_duration_minutes * 60
+os.system("cd /playground")
+
+output = os.popen("sbatch Bash.sb").read()
+jobid = output.strip().split()[-1]
+print("job id should be {}".format(jobid))
 start = time.time()
 target_time = start + test_duration_secs # where 60 sec * 5 = 5 minutes from now.
 next_checkin_time = start + 30
@@ -29,13 +26,27 @@ while(time.time() < target_time):
         # if job is still running when this loop finished, it is good.
         # if job not running... assume reaped? -- Bad bash file
         # if job not running, has non-zero exit_code, assume Bad source code.
+
+
     if (next_checkin_time < time.time()):
         # pyslurm command to check if job is running
+        job_dict = pyslurm.job().get()
 
-        if (1):#job is running
+        if(jobid in job_dict.keys()):
+            print("printing status: {}".format(job_dict[jobid]['job_state']))
+            print("printing error code: ".format(job_dict[jobid]['exit_code']))
+            job_state = job_dict[jobid]['job_state']
+            exit_code = job_dict[jobid]['exit_code']
+        else:
+            print(" okay that job id is no longer found...")
+            print(job_dict.keys())
+
+        if (job_state == 'RUNNING'):#job is running
             next_checkin_time += 30
+            print("monitor is running test...")
             continue
         else: #job is not running
+            break
             # os.system("call to check for output files")
 
             # if output file exists:
@@ -50,3 +61,18 @@ while(time.time() < target_time):
         time.sleep(5)
 
 # 5 minutes have ellapsed, clean up and return result
+print("exiting monitor: should return result.")
+# sleeping to give time to finish....
+time.sleep(60)
+job_dict = pyslurm.job().get()
+print("rewriting state and error code, now that playground test has finished.")
+job_state = job_dict[jobid]['job_state']
+exit_code = job_dict[jobid]['exit_code']
+
+if(jobid in job_dict.keys()):
+    print("printing status: {}".format(job_dict[jobid]['job_state']))
+
+pgResultFile = open("playground_result.txt","w+")
+pgResultFile.write(job_state + "\n")
+pgResultFile.write(exit_code + "\n")
+pgResultFile.close()
